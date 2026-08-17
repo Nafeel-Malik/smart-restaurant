@@ -1,0 +1,4 @@
+export const IMAGES = {
+  superAdminLoginHero:
+    'https://lh3.googleusercontent.com/aida-public/AB6AXuCiQkBVv6fxjhipc1WDUFUZUBa2WztxtTgr1hwHbxl5SHYRYofv4aBu-rhdJ3pp-QUdks4pSkmhzikFPcztlbquFnXT7VWyj6zq5PcdLVNj0cLnrA7xC634sAQqYl4SLk9q4TGqgbwdvIICqh540kQNcP_P-ahU9BGC-AUels5bbOvJSGmSjc_pFtw3ua_uGI2h7D1o9Rq8L8r75TfrdgWYACsYDW4RzfiS4s6mJDr9uTeVKNqgzWUmew',
+}

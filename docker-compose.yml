@@ -1,0 +1,99 @@
+# Smart Restaurant Management System — full stack (MongoDB + NestJS + React)
+#
+# Usage:
+#   1. Copy backend/.env.example → backend/.env and fill in secrets
+#   2. docker compose up --build
+#
+# NOTE: MONGO_URI in backend/.env is overridden below for Docker networking.
+#       Local dev can keep mongodb://localhost:27017/... in backend/.env unchanged.
+
+services:
+  mongodb:
+    image: mongo:7
+    restart: unless-stopped
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongodb_data:/data/db
+    # Mapped to host for MongoDB Compass / local debugging (optional)
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "try { rs.status().ok } catch(e) { db.adminCommand('ping').ok }"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  mongo-init:
+    image: mongo:7
+    depends_on:
+      mongodb:
+        condition: service_started
+    restart: "no"
+    entrypoint: >
+      bash -c "
+        until mongosh --host mongodb:27017 --quiet --eval 'db.adminCommand({ping:1}).ok' 2>/dev/null | grep -q 1; do sleep 1; done;
+        mongosh --host mongodb:27017 --quiet --eval \"
+          try {
+            const s = rs.status();
+            if (s.ok !== 1) throw new Error('not ready');
+            print('replica set already initialized');
+          } catch (e) {
+            rs.initiate({_id:'rs0', members:[{_id:0, host:'mongodb:27017'}]});
+            print('replica set initiated');
+          }
+        \"
+      "
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      # Docker network: service name "mongodb", not localhost
+      MONGO_URI: mongodb://mongodb:27017/smart_restaurant
+      # Browser loads frontend from host:5173 — allow CORS from there
+      CORS_ORIGINS: http://localhost:5173,http://localhost:4173
+    ports:
+      - "5001:5001"
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      mongo-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:5001/').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  frontend:
+    build:
+      context: ./frontend/frontend
+      dockerfile: Dockerfile
+      args:
+        # Browser runs on the host — API calls go to host-mapped backend port
+        VITE_API_URL: http://localhost:5001
+    restart: unless-stopped
+    ports:
+      # Host 5173 → container nginx :80 (matches familiar Vite dev port)
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  mongodb_data:
+  backend_uploads:

@@ -1,0 +1,360 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-tint: #046b5e;
+  --color-tertiary-fixed: #afefdd;
+  --color-on-secondary-fixed: #002204;
+  --color-on-primary-container: #94e5d5;
+  --color-surface-dim: #dadada;
+  --color-on-error: #ffffff;
+  --color-on-primary-fixed-variant: #005046;
+  --color-inverse-primary: #84d5c5;
+  --color-on-error-container: #93000a;
+  --color-background: #f9f9f9;
+  --color-surface-container-low: #f3f3f3;
+  --color-surface: #f9f9f9;
+  --color-on-secondary-fixed-variant: #005312;
+  --color-surface-container: #eeeeee;
+  --color-on-background: #1a1c1c;
+  --color-surface-container-high: #e8e8e8;
+  --color-tertiary-fixed-dim: #94d3c1;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #e2e2e2;
+  --color-tertiary: #034f42;
+  --color-on-secondary: #ffffff;
+  --color-primary-fixed-dim: #84d5c5;
+  --color-on-secondary-container: #217128;
+  --color-on-surface-variant: #3e4946;
+  --color-primary-fixed: #a0f2e1;
+  --color-tertiary-container: #276759;
+  --color-secondary-fixed-dim: #88d982;
+  --color-outline-variant: #bec9c5;
+  --color-secondary-fixed: #a3f69c;
+  --color-outline: #6e7976;
+  --color-secondary: #1b6d24;
+  --color-surface-bright: #f9f9f9;
+  --color-error: #ba1a1a;
+  --color-on-surface: #1a1c1c;
+  --color-surface-container-highest: #e2e2e2;
+  --color-secondary-container: #a0f399;
+  --color-on-primary-fixed: #00201b;
+  --color-inverse-surface: #2f3131;
+  --color-on-tertiary: #ffffff;
+  --color-primary: #004f45;
+  --color-inverse-on-surface: #f1f1f1;
+  --color-on-tertiary-fixed: #00201a;
+  --color-on-primary: #ffffff;
+  --color-on-tertiary-container: #a3e3d1;
+  --color-primary-container: #00695c;
+  --color-error-container: #ffdad6;
+  --color-on-tertiary-fixed-variant: #065043;
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  --spacing-stack-lg: 24px;
+  --spacing-stack-md: 16px;
+  --spacing-stack-sm: 8px;
+  --spacing-gutter: 16px;
+  --spacing-unit: 4px;
+  --spacing-container-margin: 24px;
+  --spacing-sidebar-width: 260px;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body-lg: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-sm: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label-md: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label-lg: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-md: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-lg: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-numeral-lg: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body-md: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 24px;
+  --text-headline-sm: 20px;
+  --text-headline-sm--line-height: 28px;
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.05em;
+  --text-label-lg: 14px;
+  --text-label-lg--line-height: 20px;
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 32px;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--letter-spacing: -0.02em;
+  --text-numeral-lg: 24px;
+  --text-numeral-lg--line-height: 32px;
+  --text-headline-lg-mobile: 24px;
+  --text-headline-lg-mobile--line-height: 32px;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 20px;
+}
+
+@layer base {
+  body {
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    @apply bg-background text-on-background antialiased;
+  }
+
+}
+
+@layer utilities {
+  .bg-pattern {
+    background-color: #f9f9f9;
+    background-image: radial-gradient(#004f45 0.5px, transparent 0.5px),
+      radial-gradient(#004f45 0.5px, #f9f9f9 0.5px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid #e0e0e0;
+  }
+
+  .login-card {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .login-card:hover {
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-elevation {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Motion design system — charcoal / ember (scoped; does not replace teal theme) */
+/* -------------------------------------------------------------------------- */
+.motion-ds {
+  /* Ember design tokens */
+  --color-bg: #0a0806;
+  --color-surface-elevated: #1e1914;
+  --color-accent-primary: #ff4d00;
+  --color-accent-secondary: #ffb627;
+  --color-danger: #c81d25;
+  --color-text: #f2eee9;
+  --color-text-muted: #9a9086;
+  --color-border: rgba(242, 238, 233, 0.12);
+  --color-glow: rgba(255, 77, 0, 0.45);
+  --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-duration-fast: 180ms;
+  --motion-duration-page: 260ms;
+
+  /* Remap existing Tailwind semantic tokens so customer pages inherit charcoal/ember */
+  --color-background: #0a0806;
+  --color-surface: #161210;
+  --color-surface-container-low: #1a1511;
+  --color-surface-container: #1e1914;
+  --color-surface-container-high: #241e18;
+  --color-surface-container-highest: #2a231c;
+  --color-surface-container-lowest: #100e0c;
+  --color-surface-variant: #241e18;
+  --color-surface-bright: #1e1914;
+  --color-surface-dim: #0a0806;
+  --color-on-background: #f2eee9;
+  --color-on-surface: #f2eee9;
+  --color-on-surface-variant: #9a9086;
+  --color-outline: #6e655c;
+  --color-outline-variant: rgba(242, 238, 233, 0.14);
+  --color-primary: #ff4d00;
+  --color-on-primary: #f2eee9;
+  --color-primary-container: #3d1600;
+  --color-on-primary-container: #ffb199;
+  --color-secondary: #ffb627;
+  --color-on-secondary: #1a1200;
+  --color-secondary-container: #3d2e00;
+  --color-on-secondary-container: #ffd98a;
+  --color-error: #c81d25;
+  --color-on-error: #ffffff;
+  --color-error-container: #3d0a0c;
+  --color-on-error-container: #ffb4b0;
+  --color-tertiary: #ffb627;
+  --color-on-tertiary: #1a1200;
+  --color-tertiary-container: #3d2e00;
+  --color-on-tertiary-container: #ffd98a;
+  --color-inverse-surface: #f2eee9;
+  --color-inverse-on-surface: #161210;
+  --color-inverse-primary: #ff4d00;
+
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+.motion-ds .font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Responsive pass — centralized typography + touch targets (Tailwind: sm=640, lg=1024) */
+.motion-ds .text-display-hero {
+  font-size: clamp(1.75rem, 4vw + 1rem, 3rem);
+  line-height: 1.05;
+}
+
+.motion-ds button,
+.motion-ds a[role='button'],
+.motion-ds [type='button'],
+.motion-ds [type='submit'] {
+  touch-action: manipulation;
+}
+
+@media (max-width: 399px) {
+  .motion-ds .font-headline-md {
+    font-size: clamp(1.125rem, 3vw + 0.75rem, 1.5rem);
+    line-height: 1.25;
+  }
+
+  .motion-ds .stat-label {
+    hyphens: auto;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+@keyframes motion-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.motion-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(242, 238, 233, 0.06),
+    rgba(255, 77, 0, 0.12),
+    rgba(242, 238, 233, 0.06)
+  );
+  background-size: 200% 100%;
+  animation: motion-skeleton-pulse 1.4s ease-in-out infinite;
+  border-radius: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-skeleton {
+    animation: none;
+    opacity: 0.55;
+  }
+}
+
+@keyframes auth-heat-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate3d(2%, -1.5%, 0) scale(1.04);
+    opacity: 1;
+  }
+}
+
+.auth-heat-ambient {
+  animation: auth-heat-drift 10s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.motion-ds table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.motion-ds table tbody tr:hover {
+  background-color: rgba(255, 77, 0, 0.08);
+}
+
+.motion-ds input:not([type='checkbox']):not([type='radio']),
+.motion-ds select,
+.motion-ds textarea {
+  color-scheme: dark;
+}
+
+.motion-ds select.motion-dark-select,
+.motion-ds .motion-dark-select {
+  color-scheme: dark;
+  background-color: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+.motion-ds select option,
+.motion-ds select optgroup {
+  background-color: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Do not force * { transition-duration } — that fights Framer Motion inline transitions
+     and can leave opacity-animated UI stuck invisible. Only tame CSS keyframe utilities. */
+  .motion-ds .auth-heat-ambient,
+  .motion-ds .motion-skeleton,
+  .motion-ds .motion-input-shake {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@keyframes motion-input-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.motion-input-shake {
+  animation: motion-input-shake 0.42s var(--motion-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-input-shake {
+    animation: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  #order-receipt {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

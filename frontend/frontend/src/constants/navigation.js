@@ -1,0 +1,63 @@
+export const SUPER_ADMIN_NAV = [
+  { label: 'Dashboard', path: '/dashboard', icon: 'dashboard' },
+  { label: 'Restaurants', path: '/restaurants', icon: 'storefront' },
+  { label: 'Managers', path: '/managers', icon: 'badge' },
+  { label: 'Orders', path: '/admin-orders', icon: 'receipt_long' },
+  { label: 'Email Settings', path: '/admin-settings', icon: 'mail' },
+]
+
+export const BRANCH_MANAGER_NAV = [
+  { label: 'Dashboard', path: '/branch', icon: 'dashboard' },
+  { label: 'Orders', path: '/orders', icon: 'receipt_long' },
+  { label: 'Chefs', path: '/chefs', icon: 'chef_hat' },
+  { label: 'Waiters', path: '/waiters', icon: 'person' },
+  { label: 'Tables', path: '/tables', icon: 'table_restaurant' },
+  { label: 'Menu', path: '/menu', icon: 'menu_book' },
+  { label: 'Categories', path: '/categories', icon: 'category' },
+  { label: 'Settings', path: '/settings', icon: 'settings' },
+]
+
+export const CUSTOMER_NAV = [
+  { label: 'Dashboard', path: '/customer/dashboard', icon: 'dashboard' },
+  { label: 'Restaurants', path: '/customer/restaurants', icon: 'storefront' },
+  { label: 'Orders', path: '/customer/orders', icon: 'receipt_long' },
+  { label: 'Reservations', path: '/customer/reservations', icon: 'table_restaurant' },
+  { label: 'Favorites', path: '/customer/favorites', icon: 'favorite' },
+  { label: 'Addresses', path: '/customer/addresses', icon: 'location_on' },
+  { label: 'Reviews', path: '/customer/reviews', icon: 'rate_review' },
+  { label: 'Activity', path: '/customer/activity', icon: 'history' },
+  { label: 'Profile', path: '/customer/profile', icon: 'person' },
+]
+
+export const ROUTES = {
+  HOME: '/',
+  SUPER_ADMIN_LOGIN: '/login',
+  BRANCH_MANAGER_LOGIN: '/branch-login',
+  CUSTOMER_LOGIN: '/customer/login',
+  CUSTOMER_REGISTER: '/customer/register',
+  CUSTOMER_VERIFY_OTP: '/customer/verify-otp',
+  CUSTOMER_DASHBOARD: '/customer/dashboard',
+  CUSTOMER_PROFILE: '/customer/profile',
+  CUSTOMER_ADDRESSES: '/customer/addresses',
+  CUSTOMER_FAVORITES: '/customer/favorites',
+  CUSTOMER_RESTAURANTS: '/customer/restaurants',
+  CUSTOMER_CART: '/customer/cart',
+  CUSTOMER_ORDERS: '/customer/orders',
+  CUSTOMER_RESERVATIONS: '/customer/reservations',
+  CUSTOMER_ACTIVITY: '/customer/activity',
+  CUSTOMER_REVIEWS: '/customer/reviews',
+  DASHBOARD: '/dashboard',
+  RESTAURANTS: '/restaurants',
+  ADD_RESTAURANT: '/restaurants/new',
+  EDIT_RESTAURANT: '/restaurants/:id/edit',
+  MANAGERS: '/managers',
+  ASSIGN_MANAGER: '/managers/assign',
+  BRANCH_DASHBOARD: '/branch',
+  CHEFS: '/chefs',
+  WAITERS: '/waiters',
+  TABLES: '/tables',
+  CATEGORIES: '/categories',
+  MENU: '/menu',
+  SETTINGS: '/settings',
+  ADMIN_EMAIL_SETTINGS: '/admin-settings',
+}

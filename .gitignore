@@ -1,0 +1,67 @@
+# ---- Secrets (never commit) ----
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# ---- Dependencies ----
+node_modules/
+
+# ---- Build output ----
+dist/
+dist-ssr/
+build/
+coverage/
+.nyc_output/
+
+# ---- Logs / local runtime ----
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.run/
+
+# ---- Uploads (user-generated; keep folder via .gitkeep) ----
+backend/uploads/customers/*
+!backend/uploads/customers/.gitkeep
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ---- Editors ----
+.idea/
+*.sublime-workspace
+*.sw?
+.project
+.classpath
+.settings/
+*.launch
+
+# Shared VS Code settings may be committed; ignore the rest
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ---- Docker / local data (named volumes are not in the repo; ignore bind-mount leftovers) ----
+mongo-data/
+mongodb_data/
+data/db/
+
+# Accidental npm install in frontend/ (the real app is frontend/frontend/)
+/frontend/package.json
+/frontend/package-lock.json
+frontend/frontend/_template_source/
+frontend/frontend/src/assets/images/
+*.pid
+*.seed
+*.pid.lock
+.temp/
+.tmp/
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
