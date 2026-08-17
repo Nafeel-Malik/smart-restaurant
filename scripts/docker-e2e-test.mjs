@@ -1,14 +1,21 @@
 #!/usr/bin/env node
 /**
  * Full Docker E2E — API flows through containerized stack.
+ * Uses isolated MongoDB database smart_restaurant_e2e (never smart_restaurant / Atlas).
  * OTP: checks backend logs for send success; verifies via MongoDB only if email cannot be read.
  */
 import { execSync } from 'child_process'
-import { readFileSync, writeFileSync } from 'fs'
+import { writeFileSync } from 'fs'
+import { fileURLToPath } from 'url'
 
 const API = process.env.API_URL || 'http://localhost:5001'
 const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:5173'
-const ROOT = new URL('..', import.meta.url).pathname.replace(/\/$/, '')
+const ROOT = fileURLToPath(new URL('..', import.meta.url))
+const E2E_MONGO_DB = process.env.E2E_MONGO_DB || 'smart_restaurant_e2e'
+const COMPOSE_DEV = 'docker compose -f docker-compose.yml'
+const COMPOSE_E2E = 'docker compose -f docker-compose.yml -f docker-compose.e2e.yml'
+const CLEANUP = fileURLToPath(new URL('./docker-e2e-cleanup.mjs', import.meta.url))
+
 const TS = Date.now()
 const CUSTOMER_EMAIL = `docker_e2e_${TS}@test.com`
 const CUSTOMER_PHONE = '+92300' + String(TS).slice(-7)
@@ -22,7 +29,50 @@ const log = (step, msg, ok = true) => {
 const fail = (step, msg) => {
   log(step, msg, false)
   writeFileSync('/tmp/docker-e2e-results.json', JSON.stringify(results, null, 2))
-  process.exit(1)
+  throw new Error(msg)
+}
+
+function compose(cmd) {
+  execSync(`cd "${ROOT}" && ${cmd}`, { stdio: 'inherit' })
+}
+
+function switchBackendToE2eDb() {
+  console.log(`\nSwitching backend to isolated E2E database (${E2E_MONGO_DB})...`)
+  compose(`${COMPOSE_E2E} up -d backend`)
+  waitForBackend()
+}
+
+function restoreDevBackend() {
+  console.log('\nRestoring backend to Docker dev database (smart_restaurant)...')
+  compose(`${COMPOSE_DEV} up -d backend`)
+}
+
+async function waitForBackend(maxMs = 90000) {
+  const start = Date.now()
+  while (Date.now() - start < maxMs) {
+    try {
+      const r = await fetch(`${API}/api/docs`)
+      if (r.ok) return
+    } catch {
+      /* retry */
+    }
+    await new Promise((r) => setTimeout(r, 2000))
+  }
+  throw new Error('Backend did not become healthy after switching E2E database')
+}
+
+function runCleanup() {
+  execSync(`node "${CLEANUP}"`, {
+    cwd: ROOT,
+    stdio: 'inherit',
+    env: { ...process.env, E2E_MONGO_DB },
+  })
+}
+
+function mongoshEval(js) {
+  return execSync(`cd "${ROOT}" && docker compose exec -T mongodb mongosh --quiet ${E2E_MONGO_DB} --eval ${JSON.stringify(js)}`, {
+    encoding: 'utf8',
+  }).trim()
 }
 
 async function api(method, path, { token, body } = {}) {
@@ -55,8 +105,9 @@ function backendLogs(filter = '') {
   }
 }
 
-async function main() {
+async function runTests() {
   console.log('\n=== Docker Full E2E Test ===\n')
+  console.log(`E2E database: ${E2E_MONGO_DB} (isolated from dev / Atlas)\n`)
 
   const fe = await fetch(FRONTEND)
   if (!fe.ok) fail('connectivity', `Frontend ${fe.status}`)
@@ -74,7 +125,6 @@ async function main() {
     log('connectivity', 'Frontend API URL baked correctly (localhost:5001)')
   }
 
-  // Seed admin if missing
   let r = await api('POST', '/auth/login', { body: { username: 'admin', password: 'admin123' } })
   if (!r.ok) {
     execSync(`cd "${ROOT}" && docker compose exec backend node dist/seed/run-seed.js`, { stdio: 'inherit' })
@@ -82,7 +132,7 @@ async function main() {
   }
   if (!r.ok) fail('superadmin', JSON.stringify(r.data))
   const adminToken = r.data.access_token
-  log('superadmin', 'Logged in as admin')
+  log('superadmin', 'Logged in as admin (seed account in E2E DB only)')
 
   r = await api('POST', '/restaurants', {
     token: adminToken,
@@ -123,7 +173,6 @@ async function main() {
   const menuItemId = r.data._id
   log('menu', `Item ${menuItemId} ready`)
 
-  // Register customer
   r = await api('POST', '/customer/auth/register', {
     body: {
       fullName: 'Docker E2E',
@@ -156,13 +205,8 @@ async function main() {
     log('otp-email', `Could not confirm OTP send in logs — excerpt:\n${otpLogs.slice(-400)}`, false)
   }
 
-  // Verify customer via MongoDB (simulates OTP verify when inbox unavailable in CI)
-  // In production handoff, user receives real OTP email and verifies in UI.
-  execSync(
-    `cd "${ROOT}" && docker compose exec mongodb mongosh --quiet smart_restaurant --eval "db.customers.updateOne({email:'${CUSTOMER_EMAIL}'},{\\$set:{isEmailVerified:true}})"`,
-    { stdio: 'pipe' },
-  )
-  log('verify', 'Customer marked verified in containerized MongoDB (OTP inbox check: see otp-email step)')
+  mongoshEval(`db.customers.updateOne({email:'${CUSTOMER_EMAIL}'},{$set:{isEmailVerified:true}})`)
+  log('verify', `Customer marked verified in ${E2E_MONGO_DB}`)
 
   r = await api('POST', '/customer/auth/login', {
     body: { email: CUSTOMER_EMAIL, password: CUSTOMER_PASSWORD },
@@ -201,13 +245,9 @@ async function main() {
   const orderId = r.data._id || r.data.id
   log('order', `Placed delivery order ${orderId}`)
 
-  // Confirm in MongoDB
-  const mongoOrder = execSync(
-    `cd "${ROOT}" && docker compose exec mongodb mongosh --quiet smart_restaurant --eval "JSON.stringify(db.orders.findOne({}))"`,
-    { encoding: 'utf8' },
-  ).trim()
+  const mongoOrder = mongoshEval('JSON.stringify(db.orders.findOne({}))')
   if (!mongoOrder || mongoOrder === 'null') fail('persist', 'Order not found in MongoDB')
-  log('persist', 'Order confirmed in containerized MongoDB')
+  log('persist', `Order confirmed in ${E2E_MONGO_DB}`)
 
   r = await api('GET', '/orders', { token: adminToken })
   if (!r.ok) fail('superadmin-orders', JSON.stringify(r.data))
@@ -216,21 +256,24 @@ async function main() {
   if (!found) fail('superadmin-orders', `Order ${orderId} not visible to superadmin`)
   log('superadmin-orders', 'Order visible on Superadmin Orders page')
 
-  const state = {
-    CUSTOMER_EMAIL,
-    CUSTOMER_PASSWORD,
-    orderId,
-    restaurantId,
-    TS,
-    otpSent,
-  }
-  writeFileSync('/tmp/docker-e2e-state.json', JSON.stringify(state, null, 2))
+  writeFileSync('/tmp/docker-e2e-state.json', JSON.stringify({ CUSTOMER_EMAIL, CUSTOMER_PASSWORD, orderId, restaurantId, TS, otpSent }, null, 2))
   writeFileSync('/tmp/docker-e2e-results.json', JSON.stringify(results, null, 2))
 
   console.log('\n=== E2E PASSED ===\n')
   console.log(`Customer: ${CUSTOMER_EMAIL}`)
   console.log(`Order ID: ${orderId}`)
   console.log(`OTP email sent (backend log): ${otpSent ? 'YES' : 'NO/UNCERTAIN'}\n`)
+}
+
+async function main() {
+  switchBackendToE2eDb()
+  try {
+    await runTests()
+  } finally {
+    console.log('Cleaning up E2E test data...')
+    runCleanup()
+    restoreDevBackend()
+  }
 }
 
 main().catch((e) => {

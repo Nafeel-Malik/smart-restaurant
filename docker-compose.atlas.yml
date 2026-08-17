@@ -1,0 +1,7 @@
+# Point Docker backend at Atlas (MONGO_URI from backend/.env) instead of bundled MongoDB.
+# Usage: ./scripts/docker-use-atlas.sh
+
+services:
+  backend:
+    environment:
+      MONGO_URI: ${MONGO_URI}

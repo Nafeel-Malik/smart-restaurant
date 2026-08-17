@@ -1,0 +1,13 @@
+# Docker E2E override — uses an isolated MongoDB database so verification
+# never touches the Docker dev database (smart_restaurant) or Atlas.
+#
+# Usage (automated — do not run manually unless you know why):
+#   docker compose -f docker-compose.yml -f docker-compose.e2e.yml up -d backend
+#
+# Restore normal dev database binding:
+#   docker compose up -d backend
+
+services:
+  backend:
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/smart_restaurant_e2e

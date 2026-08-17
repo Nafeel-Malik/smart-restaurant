@@ -1,0 +1,9 @@
+{
+  "name": "smart-restaurant",
+  "private": true,
+  "scripts": {
+    "test:docker-e2e": "node scripts/docker-e2e-test.mjs",
+    "cleanup:docker-e2e": "node scripts/docker-e2e-cleanup.mjs",
+    "cleanup:docker-e2e-dev": "E2E_MONGO_DB=smart_restaurant node scripts/docker-e2e-cleanup.mjs"
+  }
+}

@@ -45,6 +45,7 @@ Create `backend/.env` from `backend/.env.example` and set:
 | `EMAIL_APP_PASSWORD` | Gmail [App Password](https://support.google.com/accounts/answer/185833) (16 chars, no spaces) |
 
 You can leave `MONGO_URI` as in the example — Docker uses its own MongoDB automatically.  
+**Important:** Docker’s database is **separate** from Atlas. Your real restaurants (e.g. Savour Foods) live in Atlas and appear when running local dev (`npm run start:dev`) or after `./scripts/docker-use-atlas.sh`. See [TESTING.md](./TESTING.md).  
 For OTP email without editing `.env`, a Superadmin can configure SMTP later in the app under **Email Settings**.
 
 **Never commit `backend/.env` or `frontend/frontend/.env`.** Copy from the `.env.example` files only. Real secrets stay on your machine (they are gitignored).
@@ -58,6 +59,8 @@ For OTP email without editing `.env`, a Superadmin can configure SMTP later in t
 | `backend/` | NestJS API (port **5001**) |
 | `frontend/frontend/` | React + Vite SPA (dev port **5173**) |
 | `docker-compose.yml` | One-command containerized stack |
+| `docker-compose.e2e.yml` | Isolated E2E database override (see [TESTING.md](./TESTING.md)) |
+| `TESTING.md` | E2E rules, database isolation, cleanup commands |
 
 ---
 
